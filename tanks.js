@@ -41,66 +41,73 @@ function setup() {
 
   app.stage.addChild(tank);
   app.stage.addChild(tank2);
- 
-  //Capture the keyboard arrow keys
-  let left = keyboard("KeyA"),
-      up = keyboard("ArrowUp"),
-      right = keyboard("ArrowRight"),
-      down = keyboard("ArrowDown");
-      aKey = keyboard("KeyA");
-      //sKey = keyboard
+  
+  setKeys(tank,"ArrowLeft","ArrowRight","ArrowUp","ArrowDown");
+  setKeys(tank,"KeyA","KeyD","KeyW","KeyS");
 
   
+  //when tank gets hit
+  // app.stage.removeChild(anySprite)
+  //anySprite.visible = false;
+
+}
+
+function setKeys(obj,l, r, u ,d){
+
+  //Capture the keyboard arrow keys
+  let left = keyboard(l),
+      up = keyboard(u),
+      right = keyboard(r),
+      down = keyboard(d);
 
   //Left arrow key `press` method
   left.press = () => {
     //Change the tank's velocity when the key is pressedtank
-    tank.vx = -5;
-    tank.vy = 0;
-    console.log('meep2');
+    obj.vx = -5;
+    obj.vy = 0;
   };
   
   //Left arrow key `release` method
   left.release = () => {
     //If the left arrow has been released, and the right arrow isn't down,
-    //and the tank isn't moving vertically:
-    //Stop the tank
-    if (!right.isDown && tank.vy === 0) {
-      tank.vx = 0;
+    //and the obj isn't moving vertically:
+    //Stop the obj
+    if (!right.isDown && obj.vy === 0) {
+      obj.vx = 0;
     }
   };
 
   //Up
   up.press = () => {
-    tank.vy = -5;
-    tank.vx = 0;
+    obj.vy = -5;
+    obj.vx = 0;
     console.log("meep")
   };
   up.release = () => {
-    if (!down.isDown && tank.vx === 0) {
-      tank.vy = 0;
+    if (!down.isDown && obj.vx === 0) {
+      obj.vy = 0;
     }
   };
 
   //Right
   right.press = () => {
-    tank.vx = 5;
-    tank.vy = 0;
+    obj.vx = 5;
+    obj.vy = 0;
   };
   right.release = () => {
-    if (!left.isDown && tank.vy === 0) {
-      tank.vx = 0;
+    if (!left.isDown && obj.vy === 0) {
+      obj.vx = 0;
     }
   };
   
   //Down
   down.press = () => {
-    tank.vy = 5;
-    tank.vx = 0;
+    obj.vy = 5;
+    obj.vx = 0;
   };
   down.release = () => {
-    if (!up.isDown && tank.vx === 0) {
-      tank.vy = 0;
+    if (!up.isDown && obj.vx === 0) {
+      obj.vy = 0;
     }
   };
 
@@ -110,17 +117,7 @@ function setup() {
   //Start the game loop 
   app.ticker.add(delta => gameLoop(delta));
 
-  // setKeys(tank,"ArrowLeft","ArrowRight","ArrowUp","ArrowDown");
-  // setKeys(tank,"KeyA","KeyD","KeyW","KeyS");
-
-  
-  //when tank gets hit
-  // app.stage.removeChild(anySprite)
-  //anySprite.visible = false;
-
 }
-
-
 
 function keyboard(value) {
   let key = {};
@@ -184,11 +181,11 @@ function play(delta) {
   tank.y += tank.vy
 }
 
-function setTankVal(tank, x, y, vx, vy) {
-  tank.x = x;
-  tank.y = y;
-  tank.vx = vx;
-  tank.vy = vy;
+function setTankVal(obj, x, y, vx, vy) {
+  obj.x = x;
+  obj.y = y;
+  obj.vx = vx;
+  obj.vy = vy;
 
 }
 
@@ -202,69 +199,3 @@ function setTankVal(tank, x, y, vx, vy) {
 
 // Listen for animate update
 
-function setKeys(obj,l, r, u ,d){
-
-  //Capture the keyboard arrow keys
-  let left = keyboard(l),
-      up = keyboard(u),
-      right = keyboard(r),
-      down = keyboard(d);
-
-  //Left arrow key `press` method
-  left.press = () => {
-    //Change the tank's velocity when the key is pressedtank
-    obj.vx = -5;
-    obj.vy = 0;
-  };
-  
-  //Left arrow key `release` method
-  left.release = () => {
-    //If the left arrow has been released, and the right arrow isn't down,
-    //and the obj isn't moving vertically:
-    //Stop the obj
-    if (!right.isDown && obj.vy === 0) {
-      obj.vx = 0;
-    }
-  };
-
-  //Up
-  up.press = () => {
-    obj.vy = -5;
-    obj.vx = 0;
-    console.log("meep")
-  };
-  up.release = () => {
-    if (!down.isDown && obj.vx === 0) {
-      obj.vy = 0;
-    }
-  };
-
-  //Right
-  right.press = () => {
-    obj.vx = 5;
-    obj.vy = 0;
-  };
-  right.release = () => {
-    if (!left.isDown && obj.vy === 0) {
-      obj.vx = 0;
-    }
-  };
-  
-  //Down
-  down.press = () => {
-    obj.vy = 5;
-    obj.vx = 0;
-  };
-  down.release = () => {
-    if (!up.isDown && obj.vx === 0) {
-      tank.vy = 0;
-    }
-  };
-
-  //Set the game state
-  state = play;
-
-  //Start the game loop 
-  app.ticker.add(delta => gameLoop(delta));
-
-}
