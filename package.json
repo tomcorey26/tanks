@@ -1,12 +1,12 @@
 {
   "name": "tanks",
   "version": "1.0.0",
-  "description": "",
+  "description": "Tank game made with pixiejs",
   "main": "tanks.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Tom Corey and Tim Powell",
   "license": "ISC",
   "dependencies": {
     "eslint": "^5.12.0",
