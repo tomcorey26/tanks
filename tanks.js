@@ -1,7 +1,9 @@
 // class Tank extends Sprite {
-//   constructor(x, y) {
+//   constructor(x, y, vx,vy) {
 //     this.x = x;
 //     this.y = y;
+//     this.vx = vx;
+//     this.vy = vy;
 //   }
 // }
 
@@ -16,11 +18,14 @@ let stage = new PIXI.Container();
   PIXI.loader
   .add('tank', 'tankGreen.png')
   .add('tank2', 'tankGreen.png')
+  .add('bullet','bulletBeigeSilver_outline.png')
+  .add('smoke','smokeYellow4.png')
   .load(setup);
 
 //initialize tanks
 let tank;
 let tank2;
+let bullet;
 
 function setup() {
   stage.interactive = true;
@@ -34,6 +39,7 @@ function setup() {
   tank2 = new PIXI.Sprite(
     PIXI.loader.resources['tank2'].texture
   );
+  
 
   //add attributes to tanks
   setTankVal(tank, app.screen.width / 2, app.screen.width / 2, 0, 0);
@@ -42,8 +48,9 @@ function setup() {
   app.stage.addChild(tank);
   app.stage.addChild(tank2);
   
-  setKeys(tank,"ArrowLeft","ArrowRight","ArrowUp","ArrowDown");
-  setKeys(tank,"KeyA","KeyD","KeyW","KeyS");
+  // setKeys(tank2,"ArrowLeft","ArrowRight","ArrowUp","ArrowDown");
+  setKeys(tank,"ArrowLeft","ArrowRight","ArrowUp","ArrowDown"," ");
+ // setKeys(tank,"KeyA","KeyD","KeyW","KeyS"); 
 
   
   //when tank gets hit
@@ -52,13 +59,65 @@ function setup() {
 
 }
 
-function setKeys(obj,l, r, u ,d){
+function hitTestRectangle(r1, r2) {
+
+  //Define the variables we'll need to calculate
+  let hit, combinedHalfWidths, combinedHalfHeights, vx, vy;
+
+  //hit will determine whether there's a collision
+  hit = false;
+
+  //Find the center points of each sprite
+  r1.centerX = r1.x + r1.width / 2;
+  r1.centerY = r1.y + r1.height / 2;
+  r2.centerX = r2.x + r2.width / 2;
+  r2.centerY = r2.y + r2.height / 2;
+
+  //Find the half-widths and half-heights of each sprite
+  r1.halfWidth = r1.width / 2;
+  r1.halfHeight = r1.height / 2;
+  r2.halfWidth = r2.width / 2;
+  r2.halfHeight = r2.height / 2;
+
+  //Calculate the distance vector between the sprites
+  vx = r1.centerX - r2.centerX;
+  vy = r1.centerY - r2.centerY;
+
+  //Figure out the combined half-widths and half-heights
+  combinedHalfWidths = r1.halfWidth + r2.halfWidth;
+  combinedHalfHeights = r1.halfHeight + r2.halfHeight;
+
+  //Check for a collision on the x axis
+  if (Math.abs(vx) < combinedHalfWidths) {
+
+    //A collision might be occurring. Check for a collision on the y axis
+    if (Math.abs(vy) < combinedHalfHeights) {
+
+      //There's definitely a collision happening
+      hit = true;
+    } else {
+
+      //There's no collision on the y axis
+      hit = false;
+    }
+  } else {
+
+    //There's no collision on the x axis
+    hit = false;
+  }
+
+  //`hit` will be either `true` or `false`
+  return hit;
+};
+
+function setKeys(obj,l, r, u ,d , s){
 
   //Capture the keyboard arrow keys
   let left = keyboard(l),
       up = keyboard(u),
       right = keyboard(r),
       down = keyboard(d);
+      space = keyboard(s);
 
   //Left arrow key `press` method
   left.press = () => {
@@ -81,7 +140,6 @@ function setKeys(obj,l, r, u ,d){
   up.press = () => {
     obj.vy = -5;
     obj.vx = 0;
-    console.log("meep")
   };
   up.release = () => {
     if (!down.isDown && obj.vx === 0) {
@@ -109,6 +167,11 @@ function setKeys(obj,l, r, u ,d){
     if (!up.isDown && obj.vx === 0) {
       obj.vy = 0;
     }
+  };
+
+  space.press = () => {
+    console.log("yo")
+    shoot();
   };
 
   //Set the game state
@@ -166,7 +229,18 @@ function keyboard(value) {
 
   return key;
 }
+var bullets = [];  
 
+function shoot (){
+  bullet = new PIXI.Sprite(
+    PIXI.loader.resources['bullet'].texture
+  );
+  bullet.x = tank.x;
+  bullet.y = tank.y;
+  bullet.vy = 3;
+  app.stage.addChild(bullet);
+  bullets.push(bullet);
+}
 
 function gameLoop(delta){
 
@@ -175,10 +249,22 @@ function gameLoop(delta){
 }
 
 function play(delta) {
-
+  //bullet.y += bullet.vy;
   //Use the tank's velocity to make it move
+
+  for(var b=bullets.length-1;b>=0;b--){
+    bullets[b].position.y -= bullet.vy
+    if (hitTestRectangle(tank2,bullets[b])){
+      bullets[b].visible = false;
+      tank2.texture = PIXI.utils.TextureCache["smoke"];
+    }
+  }
+
+  
   tank.x += tank.vx;
-  tank.y += tank.vy
+  tank.y += tank.vy;
+  tank2.x += tank2.vx;
+  tank2.y += tank2.vy
 }
 
 function setTankVal(obj, x, y, vx, vy) {
